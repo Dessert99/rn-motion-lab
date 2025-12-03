@@ -11,14 +11,8 @@
 
 ## 📂 Examples
 
-### 1. Iridescence (박막 간섭 효과)
+### 1. [Iridescence (박막 간섭 효과)](https://github.com/Dessert99/rn-motion-lab/blob/main/components/iridescence.tsx)
 
-- 비눗방울이나 기름막 표면에서 볼 수 있는, 시각에 따라 색이 변하는 영롱한 무지개빛(Iridescence)을 시뮬레이션한 예제
-
-- **Core API**: `Skia.RuntimeEffect.Make` (GLSL 문자열 컴파일)
-- **Shader Logic (GLSL)**
-  - **Fragment Processing**: `main(vec2 fragCoord)` 함수를 통해 픽셀 단위 병렬 연산
-  - **Algorithm**: `sin`/`cos` 함수를 8회 중첩(`for loop`)하여 유기적인 파동 패턴 생성
-- **Animation Bridge**
-  - **Reanimated**: `useClock()`으로 매 프레임 시간(`uTime`) 측정
-  - **Uniforms**: `useDerivedValue`를 사용하여 CPU(Time) → GPU(Shader)로 값 실시간 주입
+| Feature Details | Preview |
+| :--- | :---: |
+| **📝 Description**<br>비눗방울이나 기름막 표면에서 볼 수 있는, 시각에 따라 색이 변하는 영롱한 무지개빛(Iridescence)을 시뮬레이션한 예제<br><br>**🛠 Implementation**<br> - **Core API**: `Skia.RuntimeEffect.Make`<br>&nbsp;&nbsp;(GLSL 문자열 컴파일)<br>- **Shader Logic (GLSL)**<br>&nbsp;&nbsp;• **Processing**: `main` 함수 픽셀 단위 병렬 연산<br>&nbsp;&nbsp;• **Algorithm**: `sin`/`cos` 8회 중첩으로 파동 패턴 생성<br>- **Animation Bridge**<br>&nbsp;&nbsp;• **Reanimated**: `useClock()`으로 `uTime` 측정<br>&nbsp;&nbsp;• **Uniforms**: `useDerivedValue`로 값 실시간 주입 | <img src="https://github.com/user-attachments/assets/53d89e51-d10a-40d1-b1ed-e5974be08b22" width="200" alt="Iridescence Demo"> |

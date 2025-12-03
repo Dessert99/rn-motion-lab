@@ -1,13 +1,30 @@
 {
   "expo": {
+    "name": "rn-motion-lab",
+    "slug": "rn-motion-lab",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
     "scheme": "skia",
     "web": {
       "output": "static"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/gdg.webp",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ]
     ],
-    "name": "rn-motion-lab",
-    "slug": "rn-motion-lab"
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
   }
 }

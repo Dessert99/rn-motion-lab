@@ -1,29 +1,34 @@
-import React from "react";
-import { ActivityIndicator, Text, View } from "react-native";
-import { AsyncSkia } from "../components/async-skia";
+import { Link } from "expo-router";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-const Iridescence = React.lazy(() => import("../components/iridescence"));
-
-export default function Page() {
+export default function HomePage() {
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <View
-        style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
-      >
-        <React.Suspense fallback={<ActivityIndicator />}>
-          <AsyncSkia />
-          <Iridescence />
-        </React.Suspense>
-      </View>
-      <Text
-        style={{
-          fontSize: 32,
-          fontWeight: "bold",
-          fontStyle: "italic",
-        }}
-      >
-        Welcome to Expo
-      </Text>
-    </View>
+    <SafeAreaView style={styles.container}>
+      <Link href="/skia-demo" asChild>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>Skia 예제 1 보러가기</Text>
+        </TouchableOpacity>
+      </Link>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    gap: 20,
+    padding: 16,
+  },
+  button: {
+    backgroundColor: "black",
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "600",
+  },
+});

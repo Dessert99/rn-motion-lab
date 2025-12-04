@@ -10,6 +10,11 @@ export default function HomePage() {
           <Text style={styles.buttonText}>Skia 예제 1 보러가기</Text>
         </TouchableOpacity>
       </Link>
+      <Link href="/gradient-clock" asChild>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>Skia 예제 2 보러가기</Text>
+        </TouchableOpacity>
+      </Link>
     </SafeAreaView>
   );
 }

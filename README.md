@@ -11,21 +11,23 @@
 
 ## 📂 Examples
 
-### [1. Iridescence (박막 간섭 효과)](https://github.com/Dessert99/rn-motion-lab/blob/main/components/iridescence.tsx)
+### [1. Iridescence](https://github.com/Dessert99/rn-motion-lab/blob/main/components/iridescence.tsx)
 
 | Feature Details | Preview |
 | :--- | :---: |
-| **📝 Description**<br>비눗방울이나 기름막 표면에서 볼 수 있는, 시각에 따라 색이 변하는 영롱한 무지개빛(Iridescence)을 시뮬레이션한 예제<br><br>**🛠 Implementation**<br> - **Core API**: `Skia.RuntimeEffect.Make`<br>&nbsp;&nbsp;(GLSL 문자열 컴파일)<br>- **Shader Logic (GLSL)**<br>&nbsp;&nbsp;• **Processing**: `main` 함수 픽셀 단위 병렬 연산<br>&nbsp;&nbsp;• **Algorithm**: `sin`/`cos` 8회 중첩으로 파동 패턴 생성<br>- **Animation Bridge**<br>&nbsp;&nbsp;• **Reanimated**: `useClock()`으로 `uTime` 측정<br>&nbsp;&nbsp;• **Uniforms**: `useDerivedValue`로 값 실시간 주입 | <img src="https://github.com/user-attachments/assets/53d89e51-d10a-40d1-b1ed-e5974be08b22" width="200" alt="Iridescence Demo"> |
+| **📝 Description**<br>GLSL 기반 쉐이더로, 비눗방울/기름막처럼 각도에 따라 색이 바뀌는 박막 간섭(Iridescence) 효과를 구현한 예제.<br><br>**1) 주요 기능**<br>- `Skia.RuntimeEffect.Make`로 GLSL 문자열을 GPU 쉐이더로 컴파일<br>- `Shader` 컴포넌트에 `uniforms`를 연결해 전체 화면을 쉐이더로 채움 (`Fill`)<br>- `useClock` + `useDerivedValue`로 시간(`uTime`)·해상도(`uResolution`)·색상(`uColor`)을 실시간으로 쉐이더에 주입<br><br>**2) 원리**<br>- 픽셀 단위(`main(vec2 fragCoord)`)로 좌표를 정규화하고, 여러 번의 `sin`/`cos` 반복 루프로 파동 패턴 생성<br>- 시간(`uTime`)과 속도(`uSpeed`)를 이용해 패턴이 지속적으로 흐르도록 애니메이션<br>- 최종적으로 RGB 채널을 비선형 조합해 빛의 굴절/간섭처럼 보이는 색 패턴을 계산 후 화면 전체에 렌더링<br><br>**3) 주요 옵션**<br>- `color`: `uColor`에 매핑되는 기본 색상 (RGB, `[number, number, number]`)<br>- `speed`: `uSpeed`에 매핑되는 파동 애니메이션 속도<br>- `amplitude`: `uAmplitude`에 매핑되는 물결의 강도(진폭)<br>- `width` / `height`: `useWindowDimensions`를 기본으로 하되, 필요 시 외부에서 캔버스 크기 오버라이드 가능 | <img src="https://github.com/user-attachments/assets/53d89e51-d10a-40d1-b1ed-e5974be08b22" width="200" alt="Iridescence Demo"> |
 
 
 ### [2. GradientClock](https://github.com/Dessert99/rn-motion-lab/blob/main/app/gradient-clock.tsx)
 
 | Feature Details | Preview |
 | :--- | :---: |
-| **📝 Description**<br>하루의 흐름(DAY ↔ NIGHT)을 상징적으로 표현한, 회전하는 원형 그라디언트 배경 예제.<br>Skia의 `SweepGradient`와 Reanimated의 `sharedValue`를 연결해, 시간에 따라 계속 회전하는 무한 루프 애니메이션을 구현한 데모.<br><br>**🛠 Implementation**<br>**1) Skia 레이어 구조**<br>- **`Canvas`**: Skia가 그리는 실제 캔버스. React Native의 `View`와 비슷한 컨테이너이지만, 내부 렌더링은 Skia 엔진으로 처리됨.<br>- **`Rect`**: 화면 전체를 덮는 직사각형 배경 레이어. `x=0`, `y=0`, `width=스크린 폭`, `height=스크린 높이`로 설정해 풀스크린 배경으로 사용.<br>- **`SweepGradient`**: 중심점을 기준으로 0°→360°에 걸쳐 색이 도는 원형 그라디언트.<br>&nbsp;&nbsp;• `origin`, `c`: 그라디언트의 중심 좌표. `vec(centerX, centerY)`로 기기 화면 중앙에 위치시킴.<br>&nbsp;&nbsp;• `start`, `end`: 각도 범위(0~360도) 설정으로 한 바퀴 전체를 커버.<br>&nbsp;&nbsp;• `colors`: `["white", "gray", "#222222", "black"]` 배열로 밝은 낮 → 어두운 밤으로 이어지는 색 흐름 구성.<br>&nbsp;&nbsp;• `transform`: Reanimated에서 계산한 회전 값(`[{ rotate: ... }]`)을 전달해, 그라디언트 자체를 회전시키는 핵심 속성.<br><br>**2) Reanimated 애니메이션 브리지**<br>- **`useSharedValue(0)`**: 회전 상태를 저장하는 애니메이션 값. 0 → 2 구간을 사용하며, UI 스레드에서 관리되어 프레임 드랍에 강함.<br>- **`withTiming(2, { duration: 8000, easing: Easing.linear })`**: `rotation`을 0에서 2까지 8초 동안, 일정한 속도로(linear) 변화시키는 타이밍 애니메이션.<br>- **`withRepeat(..., -1, false)`**: 위 타이밍 애니메이션을 무한 반복(-1), 왕복 없이 같은 방향으로만 반복하도록 설정.<br>- **`useDerivedValue`**: 원시 값인 `rotation.value`를 Skia가 이해할 수 있는 변환 형식으로 가공.<br>&nbsp;&nbsp;• `[{ rotate: Math.PI * rotation.value }]` 형태의 배열을 반환해 `SweepGradient`의 `transform`에 직접 연결.<br>&nbsp;&nbsp;• Reanimated shared value → Skia transform 사이의 “브리지 레이어” 역할 담당.<br>- **`useEffect`**: 컴포넌트 마운트 시점에 한 번만 애니메이션을 시작하기 위한 훅.<br>&nbsp;&nbsp;• 의존성 배열 `[]`로 설정해, 리렌더 시마다 애니메이션이 재시작되지 않도록 방지.  | ![2](https://github.com/user-attachments/assets/3c29d2d3-247c-4129-ba48-3548225940fb) |
+| **📝 Description**<br>낮(DAY)↔밤(NIGHT)의 흐름을 회전하는 원형 그라디언트로 표현한 예제. 배경은 부드럽게 회전하고, 텍스트는 고정되어 있어 대비감 있는 모션 효과를 보여준다.<br><br>**1) 주요 기능**<br>- `useSharedValue`로 회전 상태(`rotation`)를 관리하고, `withTiming` + `withRepeat`로 무한 회전 애니메이션 구현<br>- `useDerivedValue`로 `rotation`을 Skia가 사용하는 `transform` 형식(`[{ rotate: ... }]`)으로 변환<br>- Skia `Canvas` + `Rect` + `SweepGradient`로 전체 화면 배경을 그라디언트로 채우고, RN `Text`로 DAY/NIGHT 오버레이<br><br>**2) 원리**<br>- `rotation.value`를 0 → 2까지 선형으로 증가시키고(`withTiming`), 이를 무한 반복(`withRepeat`)하여 라디안 각도(`Math.PI * rotation.value`)로 변환<br>- `SweepGradient`의 `transform`에 해당 회전 값을 적용해, 중심점(`centerVec`)을 기준으로 색상 배열이 계속 회전하도록 구현<br>- Skia 레이어 위에 RN `Text`를 절대 위치로 올려, 회전하는 배경 + 고정된 타이포그래피 대비 연출<br><br>**3) 주요 옵션**<br>- `duration`, `easing`: 회전 속도와 가속 곡선(`Easing.linear`) 설정<br>- `colors`: 낮→밤을 표현하는 그라디언트 색상 리스트 (`["white", "gray", "#222222", "black"]` 등)<br>- `origin`, `c`: 그라디언트 중심점(일반적으로 화면 중앙 `vec(width/2, height/2)`) | ![2](https://github.com/user-attachments/assets/3c29d2d3-247c-4129-ba48-3548225940fb) |
 
 
 
+### [3. ChasingBubble](https://github.com/Dessert99/rn-motion-lab/blob/main/app/chasing-bubble.tsx)
 
-
-
+| Feature Details | Preview |
+| :--- | :---: |
+| **📝 Description** <br>사용자 제스처(드래그)에 반응해 점들의 크기가 스프링 애니메이션으로 변화하는 효과. 격자 형태의 버블들이 손가락 주변에서 커졌다가 사라지며 동적인 배경처럼 사용 가능.<br><br>**1) 주요 기능**<br>- `Gesture.Pan` + `GestureDetector`로 손가락 위치 추적<br>- `useSharedValue`로 터치 좌표(x, y) 관리<br>- `useDerivedValue` + `withSpring`으로 각 점의 반지름(r) 애니메이션 처리<br>- Skia `Canvas` + `Circle`로 수십 개 점을 GPU 렌더링<br><br>**2) 원리**<br>- 고정된 격자(COLUMNS × rows)를 만든 뒤, 각 점의 좌표를 index 기반으로 계산<br>- 현재 터치 좌표와 각 점 사이의 거리(`Math.hypot`)를 계산해, 일정 반경(`ACTIVE_DISTANCE`) 안에 있으면 큰 반지름, 밖이면 작은 반지름으로 설정<br>- 반지름 변경을 `withSpring`으로 부드럽게 보간해, 손가락이 지나갈 때 버블이 살아났다 사라지는 느낌을 구현<br><br>**3) 주요 옵션**<br>- `COLUMNS`, `ROW_SPACING`, `COLUMN_SPACING` : 점 격자 밀도/배치 조절<br>- `ROW_STEP_FOR_COUNT` : 화면 높이 대비 세로 줄 수(점 개수) 결정<br>- `ACTIVE_DISTANCE` : 손가락 주변 몇 px까지 반응할지 (터치 범위)<br>- `ACTIVE_RADIUS` / `INACTIVE_RADIUS` : 활성/비활성 상태에서 점 크기 설정 | ![3](https://github.com/user-attachments/assets/41097ef9-0c67-4ea1-aa7e-5a0e979ccf5b) |

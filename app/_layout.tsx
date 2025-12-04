@@ -16,8 +16,18 @@ export default function Layout() {
         }}
       />
 
-      <Stack.Screen name="skia-demo" options={{ title: " 예제 1" }} />
-      <Stack.Screen name="gradient-clock" options={{ title: " 예제 2" }} />
+      <Stack.Screen name="skia-demo" options={{ title: "skia-domo" }} />
+      <Stack.Screen
+        name="gradient-clock"
+        options={{ title: "gradient-clock" }}
+      />
+      <Stack.Screen
+        name="chasing-bubble"
+        options={{
+          title: "chasing-bubble",
+          headerShown: true,
+        }}
+      />
     </Stack>
   );
 }

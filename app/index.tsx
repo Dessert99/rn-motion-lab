@@ -12,7 +12,12 @@ export default function HomePage() {
       </Link>
       <Link href="/gradient-clock" asChild>
         <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Skia 예제 2 보러가기</Text>
+          <Text style={styles.buttonText}>gradient-clock</Text>
+        </TouchableOpacity>
+      </Link>
+      <Link href="/chasing-bubble" asChild>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>chasing-bubble</Text>
         </TouchableOpacity>
       </Link>
     </SafeAreaView>

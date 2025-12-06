@@ -20,6 +20,11 @@ export default function HomePage() {
           <Text style={styles.buttonText}>chasing-bubble</Text>
         </TouchableOpacity>
       </Link>
+      <Link href="/arcSlider" asChild>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>arcSlider</Text>
+        </TouchableOpacity>
+      </Link>
     </SafeAreaView>
   );
 }
